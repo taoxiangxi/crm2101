@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--指定properties文件的位置，从类路径根开始找文件-->
+    <properties resource="jdbc.properties">
+
+    </properties>
+    <!--settings:控制mybatis全局行为-->
+    <settings>
+        <!--设置mybatis输出日志-->
+        <setting name="logImpl" value="STDOUT_LOGGING"></setting>
+    </settings>
+
+    <!--定义别名-->
+    <typeAliases>
+        <!--可以指定一个类型一个自定义的别名
+            type:自定义类型的全限定名称
+            alias:别名(短小容易记忆的)
+        -->
+      <!--  <typeAlias type="com.bjpowernode.entity.Student"  alias="stu"></typeAlias>
+        <typeAlias type="com.bjpowernode.vo.ViewStudent" alias="vstu"></typeAlias>-->
+        <!--
+           第二种方式
+           <package>name是包名，这个包中的所有类，类名就是别名（类名不区分大小写）
+        -->
+        <package name="com.bjpowernode.entity"></package>
+        <package name="com.bjpowernode.vo"></package>
+    </typeAliases>
+    <!--环境配置:数据库的连接信息
+    default:必须和某个environment的id值一样。
+    告诉你的mybatis使用那个数据库的连接信息。也就是访问那个数据库
+-->
+    <!--配置插件-->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+    </plugins>
+    <environments default="mydev">
+        <!--environment :一个数据库信息的配置,环境
+        id：一个为唯一值,自定义的,表示环境名称的。
+    -->
+        <!--本机测试用的-->
+        <environment id="mydev">
+            <!--
+            transactionManager:mybatis的事务类型
+                type=:JDBC(表示使用jdbc中Connection对象的commit，rollback做事务处理)
+                1）JDBC 表示mybatis底层是调用jdbc中的Connection对象的，commit，rollback
+                2) MANAGED:把mybatis的事务处理委托给其它的容器（一个服务器软件，一个框架（spring））
+        -->
+            <transactionManager type="JDBC"/>
+            <!--
+            dataSource:表示数据源,连接数据库的 java体系中，规定了实现了javax.sql.DataSource接口的都是数据源。
+                    数据源表示Connection对象的。
+                type：表示数据源的类型，POOLED表示使用连接池的
+                1)POOLED:使用连接池，mybatis会创建PooledDataSource类
+                2)UPOOLED:不使用连接池，在每次执行sql语句的时候，先创建连接，执行sql,在关闭连接
+                            mybatis会创建一个UnPooledDataSource，管理Connection对象的使用
+                3)JNDI：java命名和目录服务(windows注册表)
+        -->
+            <dataSource type="POOLED">
+                <!--
+                driver,use,username,password 是固定的，不能自定义。
+            -->
+                <!--数据库的驱动类名-->
+                <property name="driver" value="${jdbc.driver}"/>
+                <!--连接数据的url字符串-->
+                <property name="url" value="${jdbc.url}"/>
+                <!--访问数据库的用户名称-->
+                <property name="username" value="${jdbc.user}"/>
+                <!--访问数据库的用户密码-->
+                <property name="password" value="${jdbc.passwd}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!--sql mapper(sql映射文件)的位置 -->
+    <mappers>
+        <!--第一种方式:指定多个mapper文件-->
+        <!--一个mapper标签指定一个文件的位置
+           从类路径开始的路径信息。target/clasess(类路径)
+    -->
+       <!-- <mapper resource="com/bjpowernode/dao/StudentDao.xml"/>
+        &lt;!&ndash;   <mapper resource="com/bjpowernode/dao/SchoolDao.xml"/>&ndash;&gt;
+        <mapper resource="com/bjpowernode/dao/OrderDao.xml"/>-->
+        <!--第二种方式：使用包名
+            name:xml文件(mapper文件)所在的包名,这个包中所有xml文件一次都能加载给mybatis
+            使用package的要求:
+            1.mapper文件名称需要和接口名称一样，区分大小写的一样
+            2.mapper文件和dao接口需要在同一目录
+        -->
+        <package name="com.bjpowernode.daomain"/>
+    </mappers>
+</configuration>
